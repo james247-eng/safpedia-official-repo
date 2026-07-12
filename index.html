@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAFpedia — Read. Watch. Listen. Learn.</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    /* Scoped landing-page styles. No public/styles/ folder exists in the
+       defined structure, so tokens + layout are kept inline in this file
+       rather than introducing an undocumented folder. */
+    :root {
+      --color-primary: #0A2463;
+      --color-accent: #FF6B35;
+      --color-secondary: #1652B8;
+      --color-accent-hover: #E55A27;
+      --color-bg: #F0F4FF;
+      --color-surface: #FFFFFF;
+      --color-divider: #DCE8FF;
+      --color-text: #1A1A2E;
+      --color-text-muted: #6B7280;
+      --color-text-white: #FFFFFF;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "Inter", sans-serif;
+      --radius-card: 12px;
+      --radius-btn: 8px;
+      --content-max: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      color: var(--color-text);
+      background: var(--color-bg);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-btn);
+      font: 600 14px var(--font-body);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+    .btn-primary { background: var(--color-accent); color: var(--color-text-white); }
+    .btn-primary:hover { background: var(--color-accent-hover); }
+    .btn-ghost { background: transparent; color: var(--color-text-white); border: 1.5px solid rgba(255,255,255,0.4); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+
+    /* Navbar */
+    .navbar {
+      background: var(--color-primary);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .logo {
+      font: 700 22px var(--font-display);
+      color: var(--color-text-white);
+      text-decoration: none;
+    }
+    .logo span.saf { color: var(--color-accent); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .nav-link {
+      color: var(--color-text-white);
+      text-decoration: none;
+      font: 500 14px var(--font-body);
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--color-primary);
+      color: var(--color-text-white);
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .hero h1 {
+      font: 700 40px var(--font-display);
+      margin: 0 0 16px 0;
+    }
+    .hero p {
+      font: 400 16px var(--font-body);
+      color: rgba(255,255,255,0.85);
+      max-width: 560px;
+      margin: 0 auto 32px auto;
+    }
+    .hero .hero-actions { display: flex; gap: 12px; justify-content: center; }
+
+    /* Section shell */
+    .section {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+    .section h2 {
+      font: 700 24px var(--font-display);
+      color: var(--color-primary);
+      margin: 0 0 24px 0;
+    }
+
+    /* Empty state (Featured Products / Top Vendors, pending Milestone 2) */
+    .empty-state {
+      background: var(--color-surface);
+      border: 1px dashed var(--color-divider);
+      border-radius: var(--radius-card);
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--color-text-muted);
+    }
+    .empty-state .material-icons {
+      font-size: 32px;
+      color: var(--color-secondary);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* Category grid */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .category-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--color-text);
+      transition: box-shadow 0.2s ease;
+    }
+    .category-card:hover { box-shadow: 0 4px 20px rgba(10, 36, 99, 0.12); }
+    .category-card .material-icons { font-size: 28px; color: var(--color-secondary); }
+    .category-card span.label { font: 600 14px var(--font-body); }
+
+    /* Footer */
+    .footer {
+      background: var(--color-primary);
+      color: rgba(255,255,255,0.85);
+      padding: 40px 24px;
+    }
+    .footer-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; }
+    .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.08);
+      color: var(--color-text-white);
+      padding: 8px 16px;
+      border-radius: var(--radius-btn);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .category-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="./index.html" class="logo"><span class="saf">SAF</span>pedia</a>
+    <div class="nav-actions">
+      <a class="nav-link" href="./login.html">Log In</a>
+      <a class="btn btn-primary" href="./register.html">Get Started</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Read. Watch. Listen. Learn.</h1>
+    <p>One platform for digital ebooks, courses, audio, and physical products from independent creators.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="./register.html">Create Free Account</a>
+      <a class="btn btn-ghost" href="./login.html">Log In</a>
+    </div>
+  </header>
+
+  <section class="section" id="featured-products">
+    <h2>Featured Products</h2>
+    <!-- Populated once product browsing (Milestone 2) is built. -->
+    <div class="empty-state">
+      <span class="material-icons">inventory_2</span>
+      New products are on their way. Check back soon.
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <h2>Browse by Category</h2>
+    <div class="category-grid">
+      <a class="category-card" href="#"><span class="material-icons">menu_book</span><span class="label">Ebooks</span></a>
+      <a class="category-card" href="#"><span class="material-icons">headphones</span><span class="label">Audiobooks</span></a>
+      <a class="category-card" href="#"><span class="material-icons">play_circle</span><span class="label">Videos</span></a>
+      <a class="category-card" href="#"><span class="material-icons">video_library</span><span class="label">Video Courses</span></a>
+      <a class="category-card" href="#"><span class="material-icons">graphic_eq</span><span class="label">Audio Courses</span></a>
+      <a class="category-card" href="#"><span class="material-icons">podcasts</span><span class="label">Podcasts</span></a>
+      <a class="category-card" href="#"><span class="material-icons">mail</span><span class="label">Newsletters</span></a>
+      <a class="category-card" href="#"><span class="material-icons">inventory_2</span><span class="label">Physical Products</span></a>
+    </div>
+  </section>
+
+  <section class="section" id="top-vendors">
+    <h2>Top Vendors</h2>
+    <!-- Populated once vendor storefront data (later milestone) is built. -->
+    <div class="empty-state">
+      <span class="material-icons">storefront</span>
+      Vendor storefronts will appear here once available.
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="./login.html">Log In</a>
+        <a href="./register.html">Register</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+      <a class="whatsapp-btn" href="#">
+        <span class="material-icons" style="font-size:18px;">support_agent</span>
+        WhatsApp Support
+      </a>
+    </div>
+  </footer>
+
+</body>
+</html>
