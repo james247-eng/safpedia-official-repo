@@ -1,257 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SAFpedia — Read. Watch. Listen. Learn.</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAFpedia | Digital Content & Multi-Vendor Marketplace</title>
+    <style>
+        /* --- DESIGN TOKENS & VARIABLES --- */
+        :root {
+            --primary-color: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #f8f9fa;
+            --text-muted: #a0a0a0;
+            --border-color: #2a2a2a;
+            --max-width: 1200px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+        /* --- GLOBAL RESETS & STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
 
-  <style>
-    /* Scoped landing-page styles. No public/styles/ folder exists in the
-       defined structure, so tokens + layout are kept inline in this file
-       rather than introducing an undocumented folder. */
-    :root {
-      --color-primary: #0A2463;
-      --color-accent: #FF6B35;
-      --color-secondary: #1652B8;
-      --color-accent-hover: #E55A27;
-      --color-bg: #F0F4FF;
-      --color-surface: #FFFFFF;
-      --color-divider: #DCE8FF;
-      --color-text: #1A1A2E;
-      --color-text-muted: #6B7280;
-      --color-text-white: #FFFFFF;
-      --font-display: "Space Grotesk", sans-serif;
-      --font-body: "Inter", sans-serif;
-      --radius-card: 12px;
-      --radius-btn: 8px;
-      --content-max: 1200px;
-    }
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s ease;
+        }
 
-    * { box-sizing: border-box; }
+        ul {
+            list-style: none;
+        }
 
-    body {
-      margin: 0;
-      font-family: var(--font-body);
-      color: var(--color-text);
-      background: var(--color-bg);
-    }
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 20px;
-      border: none;
-      border-radius: var(--radius-btn);
-      font: 600 14px var(--font-body);
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s ease;
-    }
-    .btn-primary { background: var(--color-accent); color: var(--color-text-white); }
-    .btn-primary:hover { background: var(--color-accent-hover); }
-    .btn-ghost { background: transparent; color: var(--color-text-white); border: 1.5px solid rgba(255,255,255,0.4); }
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+        /* --- BUTTONS --- */
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            display: inline-block;
+        }
 
-    /* Navbar */
-    .navbar {
-      background: var(--color-primary);
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-    }
-    .logo {
-      font: 700 22px var(--font-display);
-      color: var(--color-text-white);
-      text-decoration: none;
-    }
-    .logo span.saf { color: var(--color-accent); }
-    .nav-actions { display: flex; gap: 12px; align-items: center; }
-    .nav-link {
-      color: var(--color-text-white);
-      text-decoration: none;
-      font: 500 14px var(--font-body);
-    }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
 
-    /* Hero */
-    .hero {
-      background: var(--color-primary);
-      color: var(--color-text-white);
-      padding: 64px 24px;
-      text-align: center;
-    }
-    .hero h1 {
-      font: 700 40px var(--font-display);
-      margin: 0 0 16px 0;
-    }
-    .hero p {
-      font: 400 16px var(--font-body);
-      color: rgba(255,255,255,0.85);
-      max-width: 560px;
-      margin: 0 auto 32px auto;
-    }
-    .hero .hero-actions { display: flex; gap: 12px; justify-content: center; }
+        .btn-secondary {
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            background: transparent;
+            display: inline-block;
+        }
 
-    /* Section shell */
-    .section {
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding: 48px 24px;
-    }
-    .section h2 {
-      font: 700 24px var(--font-display);
-      color: var(--color-primary);
-      margin: 0 0 24px 0;
-    }
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
 
-    /* Empty state (Featured Products / Top Vendors, pending Milestone 2) */
-    .empty-state {
-      background: var(--color-surface);
-      border: 1px dashed var(--color-divider);
-      border-radius: var(--radius-card);
-      padding: 40px 20px;
-      text-align: center;
-      color: var(--color-text-muted);
-    }
-    .empty-state .material-icons {
-      font-size: 32px;
-      color: var(--color-secondary);
-      margin-bottom: 8px;
-      display: block;
-    }
+        /* --- NAVIGATION HEADER --- */
+        .navbar {
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
 
-    /* Category grid */
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-    }
-    .category-card {
-      background: var(--color-surface);
-      border: 1px solid var(--color-divider);
-      border-radius: var(--radius-card);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      color: var(--color-text);
-      transition: box-shadow 0.2s ease;
-    }
-    .category-card:hover { box-shadow: 0 4px 20px rgba(10, 36, 99, 0.12); }
-    .category-card .material-icons { font-size: 28px; color: var(--color-secondary); }
-    .category-card span.label { font: 600 14px var(--font-body); }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
 
-    /* Footer */
-    .footer {
-      background: var(--color-primary);
-      color: rgba(255,255,255,0.85);
-      padding: 40px 24px;
-    }
-    .footer-inner {
-      max-width: var(--content-max);
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 24px;
-    }
-    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-    .footer-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 14px; }
-    .whatsapp-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.08);
-      color: var(--color-text-white);
-      padding: 8px 16px;
-      border-radius: var(--radius-btn);
-      text-decoration: none;
-      font-size: 14px;
-    }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
 
-    @media (max-width: 768px) {
-      .category-grid { grid-template-columns: repeat(2, 1fr); }
-      .hero h1 { font-size: 28px; }
-    }
-  </style>
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 40px auto;
+        }
+
+        .hero-ctas {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* --- VALUE PROPS SECTION --- */
+        .props {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+
+        .props-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .prop-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px 30px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .prop-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .prop-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- CATEGORIES SHOWCASE --- */
+        .categories {
+            padding: 80px 0;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .cat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .cat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .cat-card h4 {
+            font-size: 1.1rem;
+        }
+
+        /* --- GLOBAL FOOTER --- */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 60px 0 30px 0;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand p {
+            color: var(--text-muted);
+            margin-top: 15px;
+            max-width: 300px;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .footer-links ul {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 992px) {
+            .props-grid {
+                grid-template-columns: 1fr;
+            }
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none; /* Can expand later with simple JS menu toggle */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-ctas {
+                flex-direction: column;
+            }
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <a href="./index.html" class="logo"><span class="saf">SAF</span>pedia</a>
-    <div class="nav-actions">
-      <a class="nav-link" href="./login.html">Log In</a>
-      <a class="btn btn-primary" href="./register.html">Get Started</a>
-    </div>
-  </nav>
+    <!-- Header Navigation Shell -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">SAF<span>pedia</span></a>
+            <nav class="nav-links">
+                <a href="ebooks.html">Ebooks</a>
+                <a href="courses.html">Courses</a>
+                <a href="audiobooks.html">Audio/Podcasts</a>
+                <a href="products.html">Shop</a>
+                <a href="#" class="btn-primary">Get Started</a>
+            </nav>
+        </div>
+    </header>
 
-  <header class="hero">
-    <h1>Read. Watch. Listen. Learn.</h1>
-    <p>One platform for digital ebooks, courses, audio, and physical products from independent creators.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="./register.html">Create Free Account</a>
-      <a class="btn btn-ghost" href="./login.html">Log In</a>
-    </div>
-  </header>
+    <main>
+        <!-- Conversion Focused Hero Segment -->
+        <section class="hero">
+            <div class="container">
+                <h1>Stream Premium Digital Content Directly to Your Screen</h1>
+                <p>Welcome to the ultimate content hub. Securely read, watch, and listen to creations from exceptional providers—completely streaming-only, with no downloads required.</p>
+                <div class="hero-ctas">
+                    <a href="#explore" class="btn-primary">Explore Products</a>
+                    <a href="#" class="btn-secondary">Become a Vendor</a>
+                </div>
+            </div>
+        </section>
 
-  <section class="section" id="featured-products">
-    <h2>Featured Products</h2>
-    <!-- Populated once product browsing (Milestone 2) is built. -->
-    <div class="empty-state">
-      <span class="material-icons">inventory_2</span>
-      New products are on their way. Check back soon.
-    </div>
-  </section>
+        <!-- Dynamic Value Proposition Matrix -->
+        <section class="props">
+            <div class="container">
+                <h2 class="section-title">A Secure Ecosystem Built For Content Creators</h2>
+                <div class="props-grid">
+                    <div class="prop-card">
+                        <h3>No Downloads Permitted</h3>
+                        <p>Our strict platform guidelines enforce an online-only delivery model, keeping content safely inside native streaming modules.</p>
+                    </div>
+                    <div class="prop-card">
+                        <h3>Buy Once, Access Forever</h3>
+                        <p>Enjoy uninterrupted lifetime streaming privileges. Complete a single transaction and revisit the media file anytime without hidden fees.</p>
+                    </div>
+                    <div class="prop-card">
+                        <h3>Multi-Vendor Marketplace</h3>
+                        <p>Enables independent digital product vendors to list, market, manage custom stores, and request direct payout balances effortlessly.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <section class="section" id="categories">
-    <h2>Browse by Category</h2>
-    <div class="category-grid">
-      <a class="category-card" href="#"><span class="material-icons">menu_book</span><span class="label">Ebooks</span></a>
-      <a class="category-card" href="#"><span class="material-icons">headphones</span><span class="label">Audiobooks</span></a>
-      <a class="category-card" href="#"><span class="material-icons">play_circle</span><span class="label">Videos</span></a>
-      <a class="category-card" href="#"><span class="material-icons">video_library</span><span class="label">Video Courses</span></a>
-      <a class="category-card" href="#"><span class="material-icons">graphic_eq</span><span class="label">Audio Courses</span></a>
-      <a class="category-card" href="#"><span class="material-icons">podcasts</span><span class="label">Podcasts</span></a>
-      <a class="category-card" href="#"><span class="material-icons">mail</span><span class="label">Newsletters</span></a>
-      <a class="category-card" href="#"><span class="material-icons">inventory_2</span><span class="label">Physical Products</span></a>
-    </div>
-  </section>
+        <!-- Product Hub Direct Access Links -->
+        <section id="explore" class="categories">
+            <div class="container">
+                <h2 class="section-title">Browse Content Categories</h2>
+                <div class="categories-grid">
+                    <a href="ebooks.html" class="cat-card">
+                        <h4>Ebooks & Newsletters</h4>
+                    </a>
+                    <a href="courses.html" class="cat-card">
+                        <h4>Video Learning</h4>
+                    </a>
+                    <a href="audiobooks.html" class="cat-card">
+                        <h4>Audiobooks & Podcasts</h4>
+                    </a>
+                    <a href="products.html" class="cat-card">
+                        <h4>Physical Products</h4>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
 
-  <section class="section" id="top-vendors">
-    <h2>Top Vendors</h2>
-    <!-- Populated once vendor storefront data (later milestone) is built. -->
-    <div class="empty-state">
-      <span class="material-icons">storefront</span>
-      Vendor storefronts will appear here once available.
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-links">
-        <a href="./login.html">Log In</a>
-        <a href="./register.html">Register</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
-      </div>
-      <a class="whatsapp-btn" href="#">
-        <span class="material-icons" style="font-size:18px;">support_agent</span>
-        WhatsApp Support
-      </a>
-    </div>
-  </footer>
+    <!-- Global Layout Footer Component -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">SAF<span>pedia</span></a>
+                    <p>Next-generation digital marketplace facilitating instant secure content access.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="ebooks.html">Ebooks</a></li>
+                        <li><a href="courses.html">Video Courses</a></li>
+                        <li><a href="audiobooks.html">Audio Library</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Partnerships</h4>
+                    <ul>
+                        <li><a href="#">Vendor Signup</a></li>
+                        <li><a href="#">Influencer Affiliate Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SAFpedia Platform. Built by Easblink Tech.</p>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>

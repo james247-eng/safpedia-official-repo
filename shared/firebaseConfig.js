@@ -4,43 +4,38 @@
 // Used by both admin/ and user/ code — this file lives in shared/ per
 // the Coding Standards Admin vs User Separation rule.
 //
-// All values come from environment variables. Never hardcode keys here.
-// See .env.example for the required variable names.
+// Firebase Web SDK config values (apiKey, authDomain, etc.) are not secret —
+// Firebase's real security boundary is Firestore Security Rules, not hiding
+// these fields — so they are hardcoded here per your instruction, instead
+// of being fetched from api/config.js. This lets you test without
+// redeploying for every change.
+//
+// IMPORTANT: this does NOT apply to Paystack secret keys or the Cloudinary
+// API secret — those must stay server-side only, in Vercel env vars, never
+// in frontend code.
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// NOTE: Vanilla JS/HTML (no bundler) cannot read process.env directly in the
-// browser. Env-injection strategy: this file fetches the Firebase Web
-// config from the api/config.js Vercel serverless function on first use,
-// then initializes Firebase once the config arrives. Callers must await
-// getFirebase() before using auth/db.
+// TODO: replace with your actual Firebase project values (Firebase Console
+// → Project Settings → General → Your apps → SDK setup and configuration).
+const firebaseConfig = {
+apiKey: "AIzaSyDeV06ALDWmi5c01Wv_tTLPuFKRywz9tHc",
+  authDomain: "sappedia-concept.firebaseapp.com",
+  projectId: "sappedia-concept",
+  storageBucket: "sappedia-concept.firebasestorage.app",
+  messagingSenderId: "881986535800",
+  appId: "1:881986535800:web:9bd4ad3c98ce651290488d",
+  measurementId: "G-ELRZPLH8VQ"
+};
 
-let firebaseApp;
-let auth;
-let db;
-let initPromise;
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
-async function initFirebase() {
-  const response = await fetch("/api/config");
-  if (!response.ok) {
-    throw new Error("Failed to load Firebase config from /api/config");
-  }
-  const firebaseConfig = await response.json();
-
-  firebaseApp = initializeApp(firebaseConfig);
-  auth = getAuth(firebaseApp);
-  db = getFirestore(firebaseApp);
-
+// Kept async for compatibility with existing callers (userAuth.js uses
+// `await getFirebase()`) even though init is now synchronous.
+export async function getFirebase() {
   return { firebaseApp, auth, db };
-}
-
-// Returns a promise resolving to { firebaseApp, auth, db }. Safe to call
-// from multiple files — initialization only runs once.
-export function getFirebase() {
-  if (!initPromise) {
-    initPromise = initFirebase();
-  }
-  return initPromise;
 }

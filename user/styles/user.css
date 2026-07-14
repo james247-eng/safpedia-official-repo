@@ -192,3 +192,199 @@ body {
     padding: var(--space-lg) var(--space-md);
   }
 }
+
+/* ── Dashboard Shell (user/index.html) ── */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar — desktop */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg) 0;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  font: 700 22px var(--font-display);
+  color: var(--color-text-white);
+  text-decoration: none;
+  padding: 0 var(--space-lg) var(--space-lg) var(--space-lg);
+  display: block;
+}
+
+.sidebar-logo .saf {
+  color: var(--color-accent);
+}
+
+/* Role toggle — shown only if user has multiple roles */
+.role-toggle {
+  margin: 0 var(--space-lg) var(--space-lg) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-btn);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-white);
+  font: 500 13px var(--font-body);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px var(--space-lg);
+  color: var(--color-text-white);
+  text-decoration: none;
+  font: 500 14px var(--font-body);
+  border-left: 3px solid transparent;
+  transition: background 0.15s ease;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-item.active {
+  border-left-color: var(--color-accent);
+  background: rgba(22, 82, 184, 0.25);
+}
+
+.nav-item .material-icons {
+  font-size: 20px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: var(--space-lg);
+}
+
+/* Top navbar — inside main content area */
+.dashboard-navbar {
+  height: var(--navbar-height);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-divider);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  padding: 0 var(--space-lg);
+}
+
+.notification-bell {
+  position: relative;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: var(--color-accent);
+  color: var(--color-text-white);
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 1px 5px;
+  min-width: 14px;
+  text-align: center;
+}
+
+/* Main content */
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dashboard-content {
+  max-width: var(--content-max);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+/* Bottom tab bar — mobile only */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-primary);
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  z-index: 10;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.bottom-nav-item.active {
+  color: var(--color-accent);
+}
+
+.bottom-nav-item .material-icons {
+  font-size: 22px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  .dashboard-content {
+    padding-bottom: 80px; /* clear the fixed bottom nav */
+  }
+}
+
+/* ── Product Card (Design Guide 5.2) ── */
+.product-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-card);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 20px rgba(10, 36, 99, 0.12);
+}
+
+/* ── Badges (Design Guide 5.6 / 5.7) ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font: 600 12px var(--font-body);
+}

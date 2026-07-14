@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — SAFpedia</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles/user.css" />
+</head>
+<body>
+
+  <div class="dashboard-layout">
+
+    <!-- Sidebar (desktop) -->
+    <aside class="sidebar">
+      <a href="./index.html" class="sidebar-logo"><span class="saf">SAF</span>pedia</a>
+
+      <!-- Shown only if the signed-in user holds more than one role.
+           Wired up by userRoleToggle.js (separate checklist item). -->
+      <div class="role-toggle" id="roleToggle" style="display:none;">
+        <span id="roleToggleLabel">Customer Mode</span>
+        <span class="material-icons" style="font-size:18px;">swap_horiz</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-view="browse">
+          <span class="material-icons">store</span> Browse
+        </a>
+        <a href="#" class="nav-item" data-view="library">
+          <span class="material-icons">local_library</span> My Library
+        </a>
+        <a href="#" class="nav-item" data-view="orders">
+          <span class="material-icons">receipt_long</span> Orders
+        </a>
+        <a href="#" class="nav-item" data-view="notifications">
+          <span class="material-icons">notifications</span> Notifications
+        </a>
+        <a href="#" class="nav-item" data-view="settings">
+          <span class="material-icons">manage_accounts</span> Account Settings
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item" id="logoutBtn" style="padding-left:0;">
+          <span class="material-icons">logout</span> Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="dashboard-main">
+      <header class="dashboard-navbar">
+        <span class="notification-bell">
+          <span class="material-icons">notifications</span>
+          <span class="notification-badge" id="notificationCount" style="display:none;">0</span>
+        </span>
+      </header>
+
+      <main class="dashboard-content" id="dashboardContent">
+        <!-- Browse view is populated by userBrowse.js (next checklist item). -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Bottom tab bar (mobile) -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item active" data-view="browse">
+      <span class="material-icons">store</span> Browse
+    </a>
+    <a href="#" class="bottom-nav-item" data-view="library">
+      <span class="material-icons">local_library</span> Library
+    </a>
+    <a href="#" class="bottom-nav-item" data-view="orders">
+      <span class="material-icons">receipt_long</span> Orders
+    </a>
+    <a href="#" class="bottom-nav-item" data-view="notifications">
+      <span class="material-icons">notifications</span> Alerts
+    </a>
+    <a href="#" class="bottom-nav-item" data-view="settings">
+      <span class="material-icons">manage_accounts</span> Account
+    </a>
+  </nav>
+
+  <script type="module" src="./scripts/userBrowse.js"></script>
+  <script type="module" src="./scripts/userSettings.js"></script>
+  <script type="module" src="./scripts/userLibrary.js"></script>
+  <script type="module" src="./scripts/userRoleToggle.js"></script>
+</body>
+</html>
