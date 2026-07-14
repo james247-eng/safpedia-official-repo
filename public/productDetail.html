@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product — SAFpedia</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="../user/styles/user.css" />
+
+  <style>
+    /* Page-scoped layout for the product detail page only. */
+    .pd-navbar {
+      height: var(--navbar-height);
+      background: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .pd-navbar a.logo {
+      font: 700 22px var(--font-display);
+      color: var(--color-text-white);
+      text-decoration: none;
+    }
+    .pd-navbar .logo .saf { color: var(--color-accent); }
+    .pd-cart-icon {
+      position: relative;
+      color: var(--color-text-white);
+      cursor: pointer;
+    }
+    .pd-cart-count {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: var(--color-accent);
+      color: var(--color-text-white);
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 20px;
+      padding: 1px 5px;
+      min-width: 14px;
+      text-align: center;
+    }
+
+    .pd-container {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-lg) 24px;
+    }
+
+    .pd-main {
+      display: flex;
+      gap: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .pd-image-col {
+      flex: 1 1 55%;
+      min-width: 280px;
+    }
+    .pd-image-col img {
+      width: 100%;
+      border-radius: var(--radius-card);
+      background: var(--color-input-bg);
+      aspect-ratio: 4/3;
+      object-fit: cover;
+    }
+
+    .pd-info-col {
+      flex: 1 1 35%;
+      min-width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pd-title {
+      font: 700 var(--text-2xl) var(--font-display);
+      color: var(--color-primary);
+      margin: 0;
+    }
+    .pd-vendor {
+      font: 400 var(--text-sm) var(--font-body);
+      color: var(--color-text-muted);
+    }
+    .pd-price {
+      font: 700 var(--text-xl) var(--font-display);
+      color: var(--color-primary);
+    }
+    .pd-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .pd-actions .btn {
+      flex: 1;
+    }
+
+    /* Tabs */
+    .pd-tabs {
+      display: flex;
+      gap: 24px;
+      border-bottom: 1px solid var(--color-divider);
+      margin: var(--space-xl) 0 var(--space-md) 0;
+    }
+    .pd-tab {
+      background: none;
+      border: none;
+      padding: 10px 0;
+      font: 600 14px var(--font-body);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .pd-tab.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-accent);
+    }
+    .pd-tab-panel {
+      display: none;
+    }
+    .pd-tab-panel.active {
+      display: block;
+    }
+
+    .pd-related-heading {
+      font: 700 var(--text-xl) var(--font-display);
+      color: var(--color-primary);
+      margin: var(--space-2xl) 0 var(--space-md) 0;
+    }
+    .pd-related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    /* Cart drawer */
+    .pd-cart-drawer {
+      position: fixed;
+      top: 0;
+      right: -360px;
+      width: 340px;
+      height: 100vh;
+      background: var(--color-surface);
+      box-shadow: -4px 0 20px rgba(10, 36, 99, 0.15);
+      padding: var(--space-lg);
+      transition: right 0.25s ease;
+      z-index: 20;
+      overflow-y: auto;
+    }
+    .pd-cart-drawer.open {
+      right: 0;
+    }
+    .pd-cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 36, 99, 0.3);
+      display: none;
+      z-index: 19;
+    }
+    .pd-cart-overlay.open {
+      display: block;
+    }
+    .pd-cart-item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .pd-cart-item img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: var(--color-input-bg);
+    }
+
+    @media (max-width: 768px) {
+      .pd-related-grid { grid-template-columns: repeat(2, 1fr); }
+      .pd-cart-drawer { width: 85vw; right: -85vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="pd-navbar">
+    <a href="../public/index.html" class="logo"><span class="saf">SAF</span>pedia</a>
+    <span class="pd-cart-icon" id="cartIcon">
+      <span class="material-icons">shopping_cart</span>
+      <span class="pd-cart-count" id="cartCount" style="display:none;">0</span>
+    </span>
+  </nav>
+
+  <div class="pd-container" id="productDetailRoot">
+    <p style="color:var(--color-text-muted);">Loading product...</p>
+  </div>
+
+  <!-- Cart drawer -->
+  <div class="pd-cart-overlay" id="cartOverlay"></div>
+  <aside class="pd-cart-drawer" id="cartDrawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-lg);">
+      <span style="font:700 18px var(--font-display); color:var(--color-primary);">Your Cart</span>
+      <span class="material-icons" id="closeCartBtn" style="cursor:pointer; color:var(--color-text-muted);">close</span>
+    </div>
+    <div id="cartItemsList"></div>
+    <div style="margin-top:var(--space-lg); padding-top:var(--space-md); border-top:1px solid var(--color-divider); display:flex; justify-content:space-between; font:700 15px var(--font-body); color:var(--color-primary);">
+      <span>Total</span>
+      <span id="cartTotal">₦0</span>
+    </div>
+  </aside>
+
+  <script type="module" src="../user/scripts/productDetail.js"></script>
+</body>
+</html>

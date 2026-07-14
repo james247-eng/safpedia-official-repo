@@ -14,6 +14,8 @@
 // generic vendor label instead of querying users/{vendorId} directly.
 
 import { getFirebase } from "../../shared/firebaseConfig.js";
+import { getCartCount } from "../../shared/utils/cart.js";
+
 import {
   collection,
   query,
@@ -162,6 +164,19 @@ function initLogout() {
     window.location.href = "../public/login.html";
   });
 }
+
+
+function updateCartBadge() {
+  const badge = document.getElementById("cartCountBadge");
+  if (!badge) return;
+  const count = getCartCount();
+  badge.style.display = count > 0 ? "block" : "none";
+  badge.textContent = count;
+}
+
+window.addEventListener("cart:updated", updateCartBadge);
+updateCartBadge();
+
 
 initDashboardNav();
 initLogout();

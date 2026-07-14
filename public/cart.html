@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart — SAFpedia</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="../user/styles/user.css" />
+
+  <style>
+    .cart-navbar {
+      height: var(--navbar-height);
+      background: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .cart-navbar a.logo {
+      font: 700 22px var(--font-display);
+      color: var(--color-text-white);
+      text-decoration: none;
+    }
+    .cart-navbar .logo .saf { color: var(--color-accent); }
+
+    .cart-container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: var(--space-xl) 24px;
+    }
+
+    .cart-title {
+      font: 700 var(--text-2xl) var(--font-display);
+      color: var(--color-primary);
+      margin: 0 0 var(--space-lg) 0;
+    }
+
+    .cart-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .cart-row img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: var(--color-input-bg);
+      flex-shrink: 0;
+    }
+    .cart-row-info { flex: 1; min-width: 0; }
+    .cart-row-title {
+      font: 600 14px var(--font-body);
+      color: var(--color-text);
+    }
+    .cart-row-price {
+      font: 700 14px var(--font-display);
+      color: var(--color-primary);
+      margin-top: 4px;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .qty-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--color-divider);
+      background: var(--color-surface);
+      cursor: pointer;
+      font: 600 14px var(--font-body);
+      color: var(--color-primary);
+    }
+
+    .cart-summary {
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      margin-top: var(--space-lg);
+    }
+    .cart-summary-row {
+      display: flex;
+      justify-content: space-between;
+      font: 700 16px var(--font-body);
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="cart-navbar">
+    <a href="./index.html" class="logo"><span class="saf">SAF</span>pedia</a>
+  </nav>
+
+  <main class="cart-container">
+    <h1 class="cart-title">Your Cart</h1>
+    <div id="cartList">
+      <p style="color:var(--color-text-muted);">Loading cart...</p>
+    </div>
+
+    <div class="cart-summary">
+      <div class="cart-summary-row">
+        <span>Total</span>
+        <span id="cartPageTotal">₦0</span>
+      </div>
+      <button class="btn btn-primary" style="width:100%; margin-top:16px;" id="checkoutBtn" disabled>
+        Proceed to Checkout
+      </button>
+      <p style="font:400 12px var(--font-body); color:var(--color-text-muted); margin-top:8px; text-align:center;">
+        Checkout is coming in a later milestone (Paystack integration).
+      </p>
+    </div>
+  </main>
+
+  <script type="module" src="../user/scripts/userCart.js"></script>
+</body>
+</html>
