@@ -19,13 +19,7 @@ import {
   getDocs,
   limit,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-  getCart,
-  addToCart,
-  removeFromCart,
-  getCartTotal,
-  getCartCount,
-} from "../../shared/utils/cart.js";
+import { addToCart, getCartCount } from "../../shared/utils/cart.js";
 
 const CONTENT_TYPE_BADGES = {
   ebook: { label: "Ebook", color: "#1652B8", icon: "menu_book" },
@@ -201,7 +195,7 @@ function wireAddToCart(product) {
   if (!btn) return;
   btn.addEventListener("click", () => {
     addToCart(product);
-    renderCartDrawer();
+    updateCartBadge();
     btn.textContent = "Added ✓";
     setTimeout(() => (btn.textContent = "Add to Cart"), 1500);
   });
@@ -239,43 +233,15 @@ async function loadRelatedProducts(category, excludeProductId) {
   }
 }
 
-// ── Cart drawer ──────────────────────────────────────────────
+// ── Cart badge ───────────────────────────────────────────────
+// Simplified: the cart icon now links directly to public/cart.html
+// (which has its own full UI in userCart.js) instead of duplicating a
+// full drawer here. This just keeps the header badge count in sync.
 
-function renderCartDrawer() {
-  const cart = getCart();
-  const list = document.getElementById("cartItemsList");
-  const total = document.getElementById("cartTotal");
+function updateCartBadge() {
   const cartCount = document.getElementById("cartCount");
-
-  if (cart.length === 0) {
-    list.innerHTML = `<p style="color:var(--color-text-muted); padding:20px 0;">Your cart is empty.</p>`;
-  } else {
-    list.innerHTML = cart
-      .map(
-        (item) => `
-      <div class="pd-cart-item">
-        <img src="${item.coverImageUrl || ""}" alt="${item.title || ""}" />
-        <div style="flex:1;">
-          <div style="font:600 13px var(--font-body); color:var(--color-text);">${item.title}</div>
-          <div style="font:400 12px var(--font-body); color:var(--color-text-muted);">${formatNaira(item.price)} × ${item.quantity}</div>
-        </div>
-        <span class="material-icons remove-cart-item" data-id="${item.productId}" style="cursor:pointer; color:var(--color-error); font-size:18px;">delete</span>
-      </div>
-    `
-      )
-      .join("");
-
-    document.querySelectorAll(".remove-cart-item").forEach((el) => {
-      el.addEventListener("click", () => {
-        removeFromCart(el.dataset.id);
-        renderCartDrawer();
-      });
-    });
-  }
-
-  total.textContent = formatNaira(getCartTotal(cart));
-
-  const count = getCartCount(cart);
+  if (!cartCount) return;
+  const count = getCartCount();
   if (count > 0) {
     cartCount.style.display = "block";
     cartCount.textContent = count;
@@ -284,26 +250,6 @@ function renderCartDrawer() {
   }
 }
 
-function initCartDrawerToggle() {
-  const icon = document.getElementById("cartIcon");
-  const drawer = document.getElementById("cartDrawer");
-  const overlay = document.getElementById("cartOverlay");
-  const closeBtn = document.getElementById("closeCartBtn");
-
-  const open = () => {
-    drawer.classList.add("open");
-    overlay.classList.add("open");
-  };
-  const close = () => {
-    drawer.classList.remove("open");
-    overlay.classList.remove("open");
-  };
-
-  icon.addEventListener("click", open);
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", close);
-}
-
-initCartDrawerToggle();
-renderCartDrawer();
+window.addEventListener("cart:updated", updateCartBadge);
+updateCartBadge();
 renderProductDetail();

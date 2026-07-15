@@ -1,0 +1,9 @@
+{
+  "name": "safpedia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SAFpedia — digital marketplace platform (Vercel serverless functions + vanilla frontend)",
+  "dependencies": {
+    "firebase-admin": "^12.1.0"
+  }
+}

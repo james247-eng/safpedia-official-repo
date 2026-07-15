@@ -10,9 +10,8 @@
 // (Paystack webhook, Milestone 5), this view will correctly show empty
 // until that milestone is built and a real purchase happens.
 //
-// KNOWN GAP (flagged): the "Access" button below links to a placeholder
-// (#) rather than a real content viewer — pdfViewer.js / audioPlayer.js /
-// videoPlayer.js don't exist yet (Milestone 3). Wire this up when they do.
+// KNOWN GAP: previously the "Access" button was a placeholder — now wired
+// to the real viewers built in Milestone 3.
 
 import { getFirebase } from "../../shared/firebaseConfig.js";
 import { registerView } from "./userBrowse.js";
@@ -25,6 +24,15 @@ import {
   getDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { openPdfViewer } from "../../shared/contentViewer/pdfViewer.js";
+import { openAudioPlayer } from "../../shared/contentViewer/audioPlayer.js";
+import { openVideoPlayer } from "../../shared/contentViewer/videoPlayer.js";
+
+const VIEWER_BY_CONTENT_TYPE = {
+  ebook: openPdfViewer,
+  audio: openAudioPlayer,
+  video: openVideoPlayer,
+};
 
 const CONTENT_TYPE_ICONS = {
   ebook: "menu_book",
@@ -82,6 +90,8 @@ async function getPurchasedProducts(uid) {
 
 function renderLibraryCard(product) {
   const icon = CONTENT_TYPE_ICONS[product.contentType] || "inventory_2";
+  const isViewable = Boolean(VIEWER_BY_CONTENT_TYPE[product.contentType]);
+
   return `
     <div class="product-card">
       <img
@@ -90,12 +100,28 @@ function renderLibraryCard(product) {
         style="width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:8px; background:var(--color-input-bg);"
       />
       <span style="font:600 15px var(--font-body); color:var(--color-text);">${product.title || "Untitled Product"}</span>
-      <a class="btn btn-primary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:6px;" href="#">
-        <span class="material-icons" style="font-size:18px;">${icon}</span>
-        Access Content
-      </a>
+      ${
+        isViewable
+          ? `<button class="btn btn-primary access-content-btn" data-product-id="${product.productId}" data-content-type="${product.contentType}" style="width:100%; display:flex; align-items:center; justify-content:center; gap:6px;">
+              <span class="material-icons" style="font-size:18px;">${icon}</span>
+              Access Content
+            </button>`
+          : `<span style="font:400 13px var(--font-body); color:var(--color-text-muted); text-align:center;">
+              <span class="material-icons" style="font-size:16px; vertical-align:middle;">${icon}</span>
+              Physical product — no digital viewer
+            </span>`
+      }
     </div>
   `;
+}
+
+function wireAccessButtons() {
+  document.querySelectorAll(".access-content-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const openViewer = VIEWER_BY_CONTENT_TYPE[btn.dataset.contentType];
+      if (openViewer) openViewer(btn.dataset.productId);
+    });
+  });
 }
 
 async function renderLibraryView() {
@@ -134,6 +160,7 @@ async function renderLibraryView() {
         ${products.map(renderLibraryCard).join("")}
       </div>
     `;
+    wireAccessButtons();
   } catch (error) {
     content.innerHTML = `<p class="form-error">Could not load your library: ${error.message}</p>`;
   }

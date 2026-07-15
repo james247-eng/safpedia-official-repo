@@ -141,51 +141,8 @@
       gap: 20px;
     }
 
-    /* Cart drawer */
-    .pd-cart-drawer {
-      position: fixed;
-      top: 0;
-      right: -360px;
-      width: 340px;
-      height: 100vh;
-      background: var(--color-surface);
-      box-shadow: -4px 0 20px rgba(10, 36, 99, 0.15);
-      padding: var(--space-lg);
-      transition: right 0.25s ease;
-      z-index: 20;
-      overflow-y: auto;
-    }
-    .pd-cart-drawer.open {
-      right: 0;
-    }
-    .pd-cart-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 36, 99, 0.3);
-      display: none;
-      z-index: 19;
-    }
-    .pd-cart-overlay.open {
-      display: block;
-    }
-    .pd-cart-item {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--color-divider);
-    }
-    .pd-cart-item img {
-      width: 48px;
-      height: 48px;
-      object-fit: cover;
-      border-radius: 6px;
-      background: var(--color-input-bg);
-    }
-
     @media (max-width: 768px) {
       .pd-related-grid { grid-template-columns: repeat(2, 1fr); }
-      .pd-cart-drawer { width: 85vw; right: -85vw; }
     }
   </style>
 </head>
@@ -193,29 +150,15 @@
 
   <nav class="pd-navbar">
     <a href="../public/index.html" class="logo"><span class="saf">SAF</span>pedia</a>
-    <span class="pd-cart-icon" id="cartIcon">
+    <a href="./cart.html" class="pd-cart-icon" id="cartIcon" style="text-decoration:none;">
       <span class="material-icons">shopping_cart</span>
       <span class="pd-cart-count" id="cartCount" style="display:none;">0</span>
-    </span>
+    </a>
   </nav>
 
   <div class="pd-container" id="productDetailRoot">
     <p style="color:var(--color-text-muted);">Loading product...</p>
   </div>
-
-  <!-- Cart drawer -->
-  <div class="pd-cart-overlay" id="cartOverlay"></div>
-  <aside class="pd-cart-drawer" id="cartDrawer">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-lg);">
-      <span style="font:700 18px var(--font-display); color:var(--color-primary);">Your Cart</span>
-      <span class="material-icons" id="closeCartBtn" style="cursor:pointer; color:var(--color-text-muted);">close</span>
-    </div>
-    <div id="cartItemsList"></div>
-    <div style="margin-top:var(--space-lg); padding-top:var(--space-md); border-top:1px solid var(--color-divider); display:flex; justify-content:space-between; font:700 15px var(--font-body); color:var(--color-primary);">
-      <span>Total</span>
-      <span id="cartTotal">₦0</span>
-    </div>
-  </aside>
 
   <script type="module" src="../user/scripts/productDetail.js"></script>
 </body>

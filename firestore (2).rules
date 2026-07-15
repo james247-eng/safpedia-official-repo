@@ -1,0 +1,231 @@
+rules_version = '2';
+
+// SAFpedia — Firestore Security Rules (Production)
+//
+// Covers: users, products, orders, payouts, reviews
+// Reference: SAFpedia Firestore Schema Reference + Build Order Checklist
+//
+// TWO ASSUMPTIONS NOT IN THE ORIGINAL SCHEMA — FLAGGED, NOT SILENT:
+//
+// 1. `orders.vendorIds` — a denormalized array of vendor IDs present in an
+//    order's `items`. Required because Firestore rules cannot filter
+//    inside an array of maps. Must be written by the Paystack webhook
+//    (api/paystackWebhook.js) alongside `items`, e.g.:
+//      vendorIds: [...new Set(items.map(i => i.vendorId))]
+//
+// 2. `users.isAdmin` (boolean) — the schema's `roles` array only defines
+//    "customer" | "vendor" | "influencer". Milestone 6 (adminTeam.js)
+//    needs a way to grant semi-admin access to other accounts, so this
+//    field is added. The super admin is additionally hardcoded by email
+//    below (SUPER_ADMIN_EMAIL) since rules cannot read Vercel env vars —
+//    replace the placeholder with your real value before deploying.
+//
+// 3. `products/{id}/private/content` (subcollection, one doc: `content`,
+//    holding `{ fileUrl }`) — FIX for a real security gap: `products` is
+//    publicly readable once approved (needed for browsing), which meant
+//    `fileUrl` — the actual ebook/audio/video link — was readable by
+//    anyone via a direct Firestore query, regardless of purchase.
+//    `fileUrl` must be REMOVED from the top-level `products` document and
+//    written here instead, at product-creation time (vendorAddProduct.js,
+//    Milestone 4). This subcollection is never client-readable; only
+//    api/verifyOwnership.js (Admin SDK, bypasses rules) and the owning
+//    vendor/admin (for edit purposes) can read it.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function userDoc(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data;
+    }
+
+    // Replace with your real SUPER_ADMIN_EMAIL value.
+    function isSuperAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email == "easblinktech@gmail.com";
+    }
+
+    function isAdmin() {
+      return isSuperAdmin() ||
+        (isSignedIn() && userDoc(request.auth.uid).isAdmin == true);
+    }
+
+    function isApprovedVendor(userId) {
+      let u = userDoc(userId);
+      return "vendor" in u.roles && u.vendorApprovalStatus == "approved";
+    }
+
+    // ── users ────────────────────────────────────────────────
+    match /users/{userId} {
+
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Registration: user creates only their own doc, as a plain
+      // customer. No vendor/influencer/balance fields may be present yet —
+      // those only get added later, by the user's own approved
+      // application (vendor/influencer fields) or by server-side webhook
+      // (balances).
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.roles == ["customer"]
+        && request.resource.data.status == "active"
+        && !("vendor_balance" in request.resource.data)
+        && !("affiliate_balance" in request.resource.data)
+        && !("isAdmin" in request.resource.data);
+
+      // Self-update: profile fields are editable, but roles, balances,
+      // referral stats, and approval decisions (approved/rejected) are
+      // not — those are admin-only or server-only. Applying for
+      // vendor/influencer status (setting the relevant *ApprovalStatus to
+      // "pending") is allowed as a self-service action.
+      allow update: if isAdmin() || (
+        isOwner(userId)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.roles == resource.data.roles
+        && request.resource.data.status == resource.data.status
+        && (!("isAdmin" in request.resource.data) || request.resource.data.isAdmin == resource.data.isAdmin)
+        && (!("vendor_balance" in request.resource.data) || request.resource.data.vendor_balance == resource.data.vendor_balance)
+        && (!("vendor_total_earned" in request.resource.data) || request.resource.data.vendor_total_earned == resource.data.vendor_total_earned)
+        && (!("affiliate_balance" in request.resource.data) || request.resource.data.affiliate_balance == resource.data.affiliate_balance)
+        && (!("referralCode" in request.resource.data) || request.resource.data.referralCode == resource.data.referralCode)
+        && (!("totalClicks" in request.resource.data) || request.resource.data.totalClicks == resource.data.totalClicks)
+        && (!("totalConversions" in request.resource.data) || request.resource.data.totalConversions == resource.data.totalConversions)
+        && (
+          !("vendorApprovalStatus" in request.resource.data)
+          || request.resource.data.vendorApprovalStatus == resource.data.vendorApprovalStatus
+          || request.resource.data.vendorApprovalStatus == "pending"
+        )
+        && (
+          !("influencerApprovalStatus" in request.resource.data)
+          || request.resource.data.influencerApprovalStatus == resource.data.influencerApprovalStatus
+          || request.resource.data.influencerApprovalStatus == "pending"
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ── products ─────────────────────────────────────────────
+    match /products/{productId} {
+
+      // Public can browse approved products only. Owning vendor and
+      // admin can also see pending/rejected products.
+      allow read: if resource.data.status == "approved"
+        || (isSignedIn() && resource.data.vendorId == request.auth.uid)
+        || isAdmin();
+
+      // Only approved vendors may list products, always starting as
+      // "pending" with zeroed stats — vendors cannot self-approve or
+      // fabricate sales/rating history.
+      allow create: if isSignedIn()
+        && request.resource.data.vendorId == request.auth.uid
+        && isApprovedVendor(request.auth.uid)
+        && request.resource.data.status == "pending"
+        && request.resource.data.sales_count == 0
+        && request.resource.data.rating == 0
+        && request.resource.data.review_count == 0;
+
+      // Vendor can edit their own listing's content fields, but not
+      // status, ownership, or stats (those are admin/server-only).
+      // Admin can update anything (e.g. approve/reject).
+      allow update: if isAdmin() || (
+        isSignedIn()
+        && resource.data.vendorId == request.auth.uid
+        && request.resource.data.vendorId == resource.data.vendorId
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.sales_count == resource.data.sales_count
+        && request.resource.data.rating == resource.data.rating
+        && request.resource.data.review_count == resource.data.review_count
+      );
+
+      allow delete: if isAdmin();
+
+      // fileUrl lives here now, not on the parent product doc (see
+      // assumption #3 above). Never publicly readable — only the owning
+      // vendor (to see/manage their own file) or admin. Client writes are
+      // blocked; only api/verifyOwnership.js (Admin SDK) and the vendor's
+      // own product-creation flow (also should go through a server
+      // endpoint, not a direct client write, once vendorAddProduct.js
+      // exists) should touch this.
+      match /private/content {
+        allow read: if isAdmin() || (
+          isSignedIn() && get(/databases/$(database)/documents/products/$(productId)).data.vendorId == request.auth.uid
+        );
+        allow write: if false;
+      }
+    }
+
+    // ── orders ───────────────────────────────────────────────
+    match /orders/{orderId} {
+
+      // Per the Firestore Schema Reference: "orders writes only happen
+      // server-side (Vercel serverless via Paystack webhook)". The
+      // webhook uses the Firebase Admin SDK, which bypasses these rules
+      // entirely — so client writes are blocked outright, with no
+      // exceptions.
+      allow read: if isSignedIn() && (
+        resource.data.customerId == request.auth.uid
+        || isAdmin()
+        || (
+          "vendorIds" in resource.data
+          && resource.data.vendorIds.hasAny([request.auth.uid])
+        )
+      );
+
+      allow write: if false;
+    }
+
+    // ── payouts ──────────────────────────────────────────────
+    match /payouts/{payoutId} {
+
+      allow read: if isSignedIn() && (
+        resource.data.requesterId == request.auth.uid || isAdmin()
+      );
+
+      // Vendor/influencer can request a payout for themselves only,
+      // always starting as "pending".
+      allow create: if isSignedIn()
+        && request.resource.data.requesterId == request.auth.uid
+        && request.resource.data.requesterType in ["vendor", "influencer"]
+        && request.resource.data.status == "pending";
+
+      // Only admin can move a payout to paid/rejected. The requester and
+      // amount cannot be changed after creation.
+      allow update: if isAdmin()
+        && request.resource.data.requesterId == resource.data.requesterId
+        && request.resource.data.amount == resource.data.amount;
+
+      allow delete: if false;
+    }
+
+    // ── reviews ──────────────────────────────────────────────
+    match /reviews/{reviewId} {
+
+      // Public read — reviews are shown on product detail pages.
+      allow read: if true;
+
+      // FIX for a flagged gap: Firestore rules alone couldn't verify a
+      // reviewer actually purchased the product (can't cheaply query the
+      // orders.items array-of-maps from here). Real fix: all review
+      // writes now go through api/submitReview.js, which verifies the
+      // purchase server-side (Admin SDK, bypasses these rules) before
+      // writing — same pattern as `orders`. Client writes are blocked
+      // outright, with no exceptions.
+      allow write: if false;
+    }
+
+    // ── Default deny ─────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
